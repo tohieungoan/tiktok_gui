@@ -9,6 +9,8 @@ class TikTokColors {
   static const Color gray2 = Color(0xFFC2C2C2);
   static const Color blue = Color(0xFF147DF4);
   static const Color twitter = Color(0xFF54ADF0);
+  static Color backGround = Color(0xFF092C28);
+  static Color circle_color = Color(0xFFAAC97B);
 }
 
 const pageindex = ['Home', 'Shop', 'Create', 'Chat', 'mypage'];

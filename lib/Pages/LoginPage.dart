@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_app/Pages/HomePage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:first_app/Services/otp_page.dart';
-import 'CreateProfilePage.dart';
 import 'SignupPage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -21,7 +20,6 @@ class _LoginPage extends State<LoginPage> {
 
   var id = TextEditingController();
   var password = TextEditingController();
-  var phone = TextEditingController();
 
   bool notvisible = true;
   bool notVisiblePassword = true;
@@ -62,42 +60,6 @@ class _LoginPage extends State<LoginPage> {
       }
     }
     setState(() {});
-  }
-// ================================================Login Using phone number ==============================================
-
-  signinphone() async {
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: phone.text.toString(),
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await FirebaseAuth.instance
-            .signInWithCredential(credential)
-            .then((value) async {
-          if (value.user != null) {
-            first_login();
-          }
-        });
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        if (e.code == 'invalid-phone-number') {
-          const SnackBar(
-              content: Text('The provided phone number is not valid.'));
-        }
-      },
-      codeSent: (String? verificationId, int? resendToken) async {
-        setState(() {
-          otpVisibilty = true;
-          _verificationCode = verificationId;
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return OTPPage(id: _verificationCode, phone: phone.text.toString());
-          }));
-        });
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        setState(() {
-          _verificationCode = verificationId;
-        });
-      },
-    );
   }
 
 // ================================================Login Using Google function ==============================================
@@ -173,10 +135,10 @@ class _LoginPage extends State<LoginPage> {
       DateTime? lastlogin = user.metadata.lastSignInTime;
 
       if (creation == lastlogin) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) {
-          return CreateProfilePage();
-        }));
+        // Navigator.pushReplacement(context,
+        //     MaterialPageRoute(builder: (context) {
+        //   return CreateProfilePage();
+        // }));
       } else {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) {
@@ -194,248 +156,216 @@ class _LoginPage extends State<LoginPage> {
 // ================================================Building The Screen ===================================================
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-        backgroundColor: Colors.white,
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 40,
-                ),
-                // Topmost image
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Image.asset(
-                    'assets/images/login.jpg',
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            SizedBox(height: screenHeight * 0.05), // Khoảng cách phía trên
+            // Ảnh trên cùng
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+              child: Image.asset(
+                'assets/images/login1.webp',
+                width: screenWidth * 0.8, // Độ rộng phù hợp màn hình
+              ),
+            ),
+            SizedBox(
+                height:
+                    screenHeight * 0.02), // Khoảng cách giữa ảnh và nội dung
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.07, // Khoảng cách ngang
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Tiêu đề "Login"
+                  const Text(
+                    'Đăng nhập',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Poppins',
+                    ),
                   ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 10),
-                  child: Column(
-                    children: [
-                      // Login Text
-                      const Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'Login',
-                          style: TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'Poppins'),
-                        ),
-                      ),
-                      // Sized box
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Visibility(
-                        visible: emailFormVisibility,
-                        child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                      icon: const Icon(
-                                        Icons.alternate_email_outlined,
-                                        color: Colors.grey,
-                                      ),
-                                      labelText: 'Email ID',
-                                      suffixIcon: IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              emailFormVisibility =
-                                                  !emailFormVisibility;
-                                            });
-                                          },
-                                          icon: const Icon(
-                                              Icons.phone_android_rounded))),
-                                  controller: id,
-                                ),
-                                TextFormField(
-                                  obscureText: notvisible,
-                                  decoration: InputDecoration(
-                                      icon: const Icon(
-                                        Icons.lock_outline_rounded,
-                                        color: Colors.grey,
-                                      ),
-                                      labelText: 'Password',
-                                      suffixIcon: IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              notvisible = !notvisible;
-                                              notVisiblePassword =
-                                                  !notVisiblePassword;
-                                              passwordVisibility();
-                                            });
-                                          },
-                                          icon: passwordIcon)),
-                                  controller: password,
-                                )
-                              ],
-                            )),
-                      ),
-                      Visibility(
-                          visible: !emailFormVisibility,
-                          child: Form(
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                  icon: const Icon(
-                                    Icons.phone_android_rounded,
-                                    color: Colors.grey,
-                                  ),
-                                  labelText: 'Phone Number',
-                                  suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          emailFormVisibility =
-                                              !emailFormVisibility;
-                                        });
-                                      },
-                                      icon: const Icon(
-                                          Icons.alternate_email_rounded))),
-                              controller: phone,
-                            ),
-                          )),
-
-                      const SizedBox(height: 13),
-
-                      // Forgot Password
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20.0),
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: GestureDetector(
-                            child: const Text(
-                              'Forgot Password?',
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.indigo),
-                            ),
-                            onTap: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return RESETpasswordPage();
-                              }));
-                            },
-                          ),
-                        ),
-                      ),
-                      // Login Button
-                      ElevatedButton(
-                        onPressed: () {
-                          if (emailFormVisibility) {
-                            login();
-                            first_login();
-                          } else {
-                            signinphone();
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(45),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        child: const Center(
-                            child: Text(
-                          "Login",
-                          style: TextStyle(fontSize: 15),
-                        )),
-                      ),
-                      // Sized box
-                      const SizedBox(height: 15),
-                      // Divider and OR
-                      Stack(
+                  SizedBox(height: screenHeight * 0.02),
+                  // Form Email
+                  Visibility(
+                    visible: emailFormVisibility,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
                         children: [
-                          const Divider(
-                            thickness: 1,
+                          // Email
+                          TextFormField(
+                            decoration: InputDecoration(
+                              icon: const Icon(Icons.alternate_email_outlined),
+                              labelText: 'Email ID',
+                            ),
+                            controller: id,
                           ),
-                          Center(
-                            child: Container(
-                              color: Colors.white,
-                              width: 70,
-                              child: const Center(
-                                child: Text(
-                                  "OR",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      backgroundColor: Colors.white),
-                                ),
+                          SizedBox(height: screenHeight * 0.02),
+                          // Password
+                          TextFormField(
+                            obscureText: notvisible,
+                            decoration: InputDecoration(
+                              icon: const Icon(Icons.lock_outline_rounded),
+                              labelText: 'Password',
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    notvisible = !notvisible;
+                                    notVisiblePassword = !notVisiblePassword;
+                                    passwordVisibility();
+                                  });
+                                },
+                                icon: passwordIcon,
                               ),
                             ),
-                          )
-                        ],
-                      ),
-                      // Sized box
-                      const SizedBox(height: 20),
-                      // Login with google
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          signInWithGoogle();
-                          first_login();
-                        },
-                        icon: Image.asset(
-                          'assets/images/google_logo.png',
-                          width: 20,
-                          height: 20,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(45),
-                            backgroundColor: Colors.white70,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        label: const Center(
-                            child: Text(
-                          "Login with Google",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black,
-                              fontFamily: 'Poppins'),
-                        )),
-                      ),
-                      // Sized box
-                      const SizedBox(height: 25),
-                      // Register button
-                      Center(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "New to the App? ",
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey),
+                            controller: password,
                           ),
-                          GestureDetector(
-                            child: const Text(
-                              "Register",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.indigo),
-                            ),
-                            onTap: () {
-                              Navigator.pushReplacement(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return SignUpPage();
-                              }));
-                            },
-                          )
                         ],
-                      ))
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: screenHeight * 0.02),
+                  // Forgot Password
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      child: const Text(
+                        'Quên mật khẩu?',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.indigo,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return RESETpasswordPage();
+                        }));
+                      },
+                    ),
+                  ),
+                  // Login Button
+                  ElevatedButton(
+                    onPressed: () {
+                      if (emailFormVisibility) {
+                        login();
+                        first_login();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size.fromHeight(screenHeight * 0.06),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Đăng nhập",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  // OR Divider
+                  Stack(
+                    children: [
+                      const Divider(thickness: 1),
+                      Center(
+                        child: Container(
+                          color: Colors.white,
+                          width: screenWidth * 0.2,
+                          child: const Center(
+                            child: Text(
+                              "Hoặc",
+                              style: TextStyle(
+                                fontSize: 20,
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
+                  // Login with Google
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      signInWithGoogle();
+                      first_login();
+                    },
+                    icon: Image.asset(
+                      'assets/images/google_logo.png',
+                      width: screenWidth * 0.05,
+                      height: screenHeight * 0.05,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size.fromHeight(screenHeight * 0.06),
+                      backgroundColor: Colors.white70,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    label: const Center(
+                      child: Text(
+                        "Đăng nhập với Google",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.black,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Register Section
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Người dùng mới? ",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        GestureDetector(
+                          child: const Text(
+                            "Đăng ký ngay",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.indigo,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (context) {
+                              return SignUpPage();
+                            }));
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ));
+          ],
+        ),
+      ),
+    );
   }
 }

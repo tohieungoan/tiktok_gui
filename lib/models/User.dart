@@ -7,7 +7,7 @@ class User {
   String? birthdate;
   String? email;
   String? phone;
-  String? social;
+  String? avatarImg;
 
   User({
     this.id,
@@ -18,7 +18,7 @@ class User {
     this.birthdate,
     this.email,
     this.phone,
-    this.social,
+    this.avatarImg,
   });
 
   // Khởi tạo từ JSON
@@ -31,7 +31,7 @@ class User {
     birthdate = json['birthdate'];
     email = json['email'];
     phone = json['phone'];
-    social = json['social'];
+    avatarImg = json['avatarImg'];
   }
 
   // Chuyển đối tượng User sang JSON
@@ -45,7 +45,7 @@ class User {
     data['birthdate'] = birthdate;
     data['email'] = email;
     data['phone'] = phone;
-    data['social'] = social;
+    data['avatarImg'] = avatarImg;
     return data;
   }
 }

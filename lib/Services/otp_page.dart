@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import '../Pages/CreateProfilePage.dart';
 import '../Pages/HomePage.dart';
 import 'package:first_app/Pages/LoginPage.dart';
 
@@ -24,9 +23,9 @@ class _OTPpage extends State<OTPPage> {
         FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
 
     if (creation == lastlogin) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return CreateProfilePage();
-      }));
+      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+      //   return CreateProfilePage();
+      // }));
     } else {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
         return HomeScreen();

@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_app/Pages/EditProfile.dart';
 import 'package:first_app/Pages/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'Pages/CreateProfilePage.dart';
 import 'Pages/SignupPage.dart';
 import 'firebase_options.dart';
 import 'Pages/LoginPage.dart';
@@ -17,13 +17,18 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  static const String ipv4 = "http://192.168.114.140:8000";
+  static const String ipv4 = "http://192.168.1.16:8000/api/v1/";
+
   const MyApp({super.key});
 
   page() {
     if (FirebaseAuth.instance.currentUser?.uid == null) {
       print("Logged in");
-      return LoginPage();
+      // return ProfilePage(
+      //   username: "to hieu ngoan",
+      //   email: "ngoanpros213@gmail.com",
+      // );
+      return HomeScreen();
     } else {
       return const HomeScreen();
     }

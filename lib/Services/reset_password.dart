@@ -16,7 +16,11 @@ class _RESETpassword extends State<RESETpasswordPage> {
     Navigator.of(context).pop();
   }
 
+  @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -27,60 +31,66 @@ class _RESETpassword extends State<RESETpasswordPage> {
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
-          padding: const EdgeInsets.all(30.0),
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
           child: Column(
             children: [
               SizedBox(
-                  height: 300,
-                  child: Image.asset('assets/images/reset_password.jpg')),
+                height: screenHeight * 0.35,
+                child: Image.asset('assets/images/reset_pass.webp'),
+              ),
+              SizedBox(height: screenHeight * 0.02),
               Container(
                 alignment: Alignment.centerLeft,
                 child: const Text(
-                  'Forgot \nPassword?',
+                  'Quên \nMật khẩu?',
                   style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 40,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black),
+                    fontFamily: 'Poppins',
+                    fontSize: 35,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
               ),
+              SizedBox(height: screenHeight * 0.01),
               Container(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  "Don't worry! It happens. Please enter the \naddress associated with the account.",
-                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                child: const Text(
+                  "Đừng lo lắng! Vui lòng nhập \nđịa chỉ liên kết với tài khoản..",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: screenHeight * 0.03),
               Container(
                 alignment: Alignment.centerRight,
                 child: Form(
-                    child: TextFormField(
-                  controller: email,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
+                  child: TextFormField(
+                    controller: email,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
                       icon: Icon(Icons.alternate_email_rounded,
-                          color: Colors.grey)),
-                )),
+                          color: Colors.grey),
+                      hintText: "Nhập vào địa chỉ email của bạn",
+                    ),
+                  ),
+                ),
               ),
-              SizedBox(
-                height: 40,
-              ),
+              SizedBox(height: screenHeight * 0.04),
               ElevatedButton(
                 onPressed: () {
                   reset_password();
                 },
                 style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10))),
+                  minimumSize: Size.fromHeight(screenHeight * 0.07),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 child: const Center(
-                    child: Text(
-                  "Reset",
-                  style: TextStyle(fontSize: 15),
-                )),
+                  child: Text(
+                    "Reset",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ),
               ),
             ],
           ),
